@@ -318,7 +318,7 @@ export default function CreateListing() {
           </p>
           <div className='flex gap-4'>
             <input
-              onChange={(e) => setFiles(e.target.files)}
+              onChange={(e) => setFiles(Array.from(e.target.files))}
               className='p-3 border border-gray-300 rounded w-full'
               type='file'
               id='images'

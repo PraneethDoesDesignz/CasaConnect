@@ -1,17 +1,22 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: 'mern-estate.firebaseapp.com',
-  projectId: 'mern-estate',
-  storageBucket: 'mern-estate.appspot.com',
-  messagingSenderId: '1078482850952',
-  appId: '1:1078482850952:web:28f19139ab77246602fb3d',
+  apiKey: "AIzaSyBkJlgU9ozVDn49CWtJkqlTbK8Cs1zdobE",
+  authDomain: "casaconnect-5fa6c.firebaseapp.com",
+  projectId: "casaconnect-5fa6c",
+  storageBucket: "casaconnect-5fa6c.firebasestorage.app",
+  messagingSenderId: "541664050536",
+  appId: "1:541664050536:web:59be901ae789b8e20a6add"
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+export { app, auth, provider, db, storage };
