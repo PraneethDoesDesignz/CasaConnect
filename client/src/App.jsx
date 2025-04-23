@@ -10,11 +10,13 @@ import CreateListing from './pages/CreateListing';
 import UpdateListing from './pages/UpdateListing';
 import Listing from './pages/Listing';
 import Search from './pages/Search';
+import SalesforceChatWidget from './components/SalesforceChatWidget';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Header />
+      <SalesforceChatWidget />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/sign-in' element={<SignIn />} />

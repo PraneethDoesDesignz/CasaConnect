@@ -1,5 +1,5 @@
 {
-  "name": "mern-estate",
+  "name": "CasaConnect",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,11 +15,15 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "firebase": "^11.5.0",
+    "firebase-admin": "^13.2.0",
+    "jsforce": "^3.7.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.6",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.10.1",
     "nodemon": "^3.1.9"
   }
 }

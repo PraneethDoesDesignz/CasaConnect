@@ -2,6 +2,8 @@ import User from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
+import { createLead } from '../utils/salesforceLeadUtils.js';
+import { sendFollowupEmail } from '../utils/mailer.js';
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -9,6 +11,16 @@ export const signup = async (req, res, next) => {
   const newUser = new User({ username, email, password: hashedPassword });
   try {
     await newUser.save();
+    // Salesforce: Always create a new lead for user signup
+    await createLead({
+      Email: email,
+      FirstName: username,
+      LastName: '- CasaConnect User',
+      Status: 'Registered',
+      Company: 'CasaConnect'
+    });
+    // Send welcome email
+    await sendFollowupEmail(email, username, 'welcome');
     res.status(201).json('User created successfully!');
   } catch (error) {
     next(error);
@@ -28,6 +40,7 @@ export const signin = async (req, res, next) => {
       .cookie('access_token', token, { httpOnly: true })
       .status(200)
       .json(rest);
+    // console.log('JWT token:', token);
   } catch (error) {
     next(error);
   }

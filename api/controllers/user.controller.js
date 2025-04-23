@@ -2,6 +2,8 @@ import bcryptjs from 'bcryptjs';
 import User from '../models/user.model.js';
 import { errorHandler } from '../utils/error.js';
 import Listing from '../models/listing.model.js';
+import { createLead, findLeadByEmail, updateLeadByEmail } from '../utils/salesforceLeadUtils.js';
+import { sendFollowupEmail } from '../utils/mailer.js';
 
 export const test = (req, res) => {
   res.json({
@@ -10,7 +12,7 @@ export const test = (req, res) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  if (req.user.id !== req.params.id)
+  if (req.user.id.toString() !== req.params.id.toString())
     return next(errorHandler(401, 'You can only update your own account!'));
   try {
     if (req.body.password) {
@@ -30,6 +32,30 @@ export const updateUser = async (req, res, next) => {
       { new: true }
     );
 
+    // Salesforce: Update lead if exists, else create new lead for profile update
+    if (updatedUser && updatedUser.email) {
+      const leadId = await findLeadByEmail(updatedUser.email);
+      if (leadId) {
+        await updateLeadByEmail(updatedUser.email, {
+          Email: updatedUser.email,
+          FirstName: updatedUser.username,
+          LastName: '- CasaConnect User',
+          Status: 'Profile Updated',
+          Company: 'CasaConnect'
+        });
+      } else {
+        await createLead({
+          Email: updatedUser.email,
+          FirstName: updatedUser.username,
+          LastName: '- CasaConnect User',
+          Status: 'Profile Updated',
+          Company: 'CasaConnect'
+        });
+      }
+      // Send profile update email
+      await sendFollowupEmail(updatedUser.email, updatedUser.username, 'profileUpdate');
+    }
+
     const { password, ...rest } = updatedUser._doc;
 
     res.status(200).json(rest);
@@ -39,10 +65,22 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-  if (req.user.id !== req.params.id)
+  if (req.user.id.toString() !== req.params.id.toString())
     return next(errorHandler(401, 'You can only delete your own account!'));
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
+    // Salesforce: Always create a new lead for profile deletion
+    if (user && user.email) {
+      await createLead({
+        Email: user.email,
+        FirstName: user.username,
+        LastName: '- CasaConnect User',
+        Status: 'Profile Deleted',
+        Company: 'CasaConnect'
+      });
+      // Send goodbye email
+      await sendFollowupEmail(user.email, user.username, 'goodbye');
+    }
     res.clearCookie('access_token');
     res.status(200).json('User has been deleted!');
   } catch (error) {
@@ -51,15 +89,15 @@ export const deleteUser = async (req, res, next) => {
 };
 
 export const getUserListings = async (req, res, next) => {
-  if (req.user.id === req.params.id) {
-    try {
-      const listings = await Listing.find({ userRef: req.params.id });
-      res.status(200).json(listings);
-    } catch (error) {
-      next(error);
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-  } else {
-    return next(errorHandler(401, 'You can only view your own listings!'));
+    const listings = await Listing.find({ userRef: userId });
+    res.status(200).json({ success: true, listings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching listings', error: error.message });
   }
 };
 
