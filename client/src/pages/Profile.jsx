@@ -285,6 +285,13 @@ export default function Profile() {
             id='password'
             className='border p-3 rounded-lg'
           />
+          <input
+            type='text'
+            placeholder='Phone'
+            className='border p-3 rounded-lg'
+            id='phone'
+            onChange={handleChange}
+          />
           <button
             disabled={loading}
             className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'

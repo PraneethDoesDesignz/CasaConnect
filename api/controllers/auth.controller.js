@@ -6,9 +6,9 @@ import { createLead } from '../utils/salesforceLeadUtils.js';
 import { sendFollowupEmail } from '../utils/mailer.js';
 
 export const signup = async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, phone } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
-  const newUser = new User({ username, email, password: hashedPassword });
+  const newUser = new User({ username, email, password: hashedPassword, phone });
   try {
     await newUser.save();
     // Salesforce: Always create a new lead for user signup
@@ -68,6 +68,7 @@ export const google = async (req, res, next) => {
         email: req.body.email,
         password: hashedPassword,
         avatar: req.body.photo,
+        phone: req.body.phone,
       });
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
