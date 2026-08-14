@@ -1,67 +1,64 @@
-import * as React from "react";
-import { AlertTriangle, X, CheckCircle2 } from "lucide-react";
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import * as React from 'react';
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
+import { PiWarningCircle, PiCheckCircle, PiX } from 'react-icons/pi';
 
-const AlertDialog = AlertDialogPrimitive.Root;
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
-const AlertDialogPortal = AlertDialogPrimitive.Portal;
+export default function AuthErrorDialog({
+  open,
+  onOpenChange,
+  errorMessage,
+  errorTitle,
+}) {
+  const isSuccess = errorTitle?.toLowerCase().includes('success');
 
-const AlertDialogOverlay = React.forwardRef(
-  ({ className, ...props }, ref) => (
-    <AlertDialogPrimitive.Overlay
-      className={
-        "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 " +
-        (className || "")
-      }
-      {...props}
-      ref={ref}
-    />
-  )
-);
-AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
-
-const AlertDialogContent = React.forwardRef(
-  ({ className, ...props }, ref) => (
-    <AlertDialogPortal>
-      <AlertDialogOverlay />
-      <AlertDialogPrimitive.Content
-        ref={ref}
-        className={
-          "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg " +
-          (className || "")
-        }
-        {...props}
-      />
-    </AlertDialogPortal>
-  )
-);
-AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
-
-export default function AuthErrorDialog({ open, onOpenChange, errorMessage, errorTitle }) {
-  // Show green tick for success, else red exclamation
-  const isSuccess = errorTitle && errorTitle.toLowerCase().includes('success');
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <div className="flex items-center gap-3">
-          {isSuccess ? (
-            <CheckCircle2 className="text-green-500" />
-          ) : (
-            <AlertTriangle className="text-red-500" />
-          )}
-          <div className="flex-1">
-            <h2 className="font-bold text-lg mb-1">{errorTitle || "Error"}</h2>
-            <p className="text-sm text-gray-700">{errorMessage}</p>
+    <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <AlertDialogPrimitive.Portal>
+        <AlertDialogPrimitive.Overlay className='fixed inset-0 z-50 bg-[rgb(var(--shadow-tint))]/40 backdrop-blur-[2px]' />
+        <AlertDialogPrimitive.Content
+          className='fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2
+                     -translate-y-1/2 rounded-card border bg-surface p-6
+                     shadow-[0_16px_48px_rgb(var(--shadow-tint)/0.16)]'
+        >
+          <div className='flex gap-4'>
+            <span
+              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-control ${
+                isSuccess
+                  ? 'bg-accent-soft text-accent-ink'
+                  : 'bg-danger-soft text-danger'
+              }`}
+            >
+              {isSuccess ? (
+                <PiCheckCircle className='h-5 w-5' aria-hidden='true' />
+              ) : (
+                <PiWarningCircle className='h-5 w-5' aria-hidden='true' />
+              )}
+            </span>
+
+            <div className='flex-1 pt-0.5'>
+              <AlertDialogPrimitive.Title className='font-semibold tracking-tight'>
+                {errorTitle || 'Something went wrong'}
+              </AlertDialogPrimitive.Title>
+              <AlertDialogPrimitive.Description className='mt-1.5 text-sm leading-relaxed text-muted'>
+                {errorMessage}
+              </AlertDialogPrimitive.Description>
+
+              <div className='mt-5 flex justify-end'>
+                <AlertDialogPrimitive.Action className='btn btn-sm btn-primary'>
+                  {isSuccess ? 'Done' : 'Try again'}
+                </AlertDialogPrimitive.Action>
+              </div>
+            </div>
+
+            <AlertDialogPrimitive.Cancel
+              aria-label='Close'
+              className='-mr-2 -mt-2 flex h-8 w-8 shrink-0 items-center justify-center
+                         self-start rounded-control text-muted transition-colors hover:bg-sunken hover:text-ink'
+            >
+              <PiX className='h-4 w-4' aria-hidden='true' />
+            </AlertDialogPrimitive.Cancel>
           </div>
-          <button
-            className="ml-4 p-2 rounded hover:bg-gray-100 focus:outline-none"
-            onClick={() => onOpenChange(false)}
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-      </AlertDialogContent>
-    </AlertDialog>
+        </AlertDialogPrimitive.Content>
+      </AlertDialogPrimitive.Portal>
+    </AlertDialogPrimitive.Root>
   );
 }

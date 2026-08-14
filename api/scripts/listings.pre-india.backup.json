@@ -1,0 +1,93 @@
+[
+  {
+    "_id": "67e1658eb6097d78f294bf00",
+    "name": "1720 N Paulina St",
+    "address": "Chicago, IL 60622",
+    "description": "Perfectly located single family home, got rehab in 2016 with unique floor plan and custom finishes throughout. 3 bedrooms upstairs, 1 downstairs. ",
+    "regularPrice": 10000000
+  },
+  {
+    "_id": "67e16cabb6097d78f294bf51",
+    "name": "1520 N Ashland Ave #1",
+    "address": " Chicago, IL 60622",
+    "description": "Step into this extremely rare newer construction triplex in Bucktown, built in 2023, offering 3,300 SQFT of living space across three levels with soaring 10-foot ceilings throughout.",
+    "regularPrice": 30000
+  },
+  {
+    "_id": "67e16edcb6097d78f294bf5c",
+    "name": "1746 N Artesian Ave",
+    "address": ", Chicago, IL 60647",
+    "description": "Impeccable single family home just steps from the 606! This 5 bedroom, 3bath home has been immaculately maintained alongside tasteful updates. A picturesque front porch overlooks the maintenance-free turf front yard. ",
+    "regularPrice": 30000
+  },
+  {
+    "_id": "67e17648b6097d78f294bf82",
+    "name": "1320 N Moorman St",
+    "address": " Chicago, IL 60622",
+    "description": "Nestled in one of Wicker Park's most coveted locations, just two blocks from Division Street, this stunning 4-bedroom, 3 - bath SmartTech single-family home is designed for luxurious living and seamless entertaining. Step inside to a welcoming entryway with custom-built cabinetry, leading to a sunlit living room with a large picture windows.",
+    "regularPrice": 100000
+  },
+  {
+    "_id": "67e187bfb6097d78f294bf8c",
+    "name": "121 W Chestnut St Unit 2104",
+    "address": "Chicago, IL 60610",
+    "description": "Quartz Countertops Stainless Steel Appliances Dishwasher & Microwave Hardwood Flooring Washer/Dryer in-unit Large Walk-in Closet Central Heat/AC Floor to Ceiling Windows Pet Friendly Community",
+    "regularPrice": 2550000
+  },
+  {
+    "_id": "67e189b7b6097d78f294bf94",
+    "name": "Harper Court Apartments",
+    "address": "5134-5136 S Harper Ave,Chicago, IL 6061",
+    "description": "Harper Court is a classic piece of 1920's Chicago architecture with updated common areas that include elevator access. This apartment has a gated parking lot that provides the convenience of on-site parking.",
+    "regularPrice": 35000
+  },
+  {
+    "_id": "67e18bc7b6097d78f294bfaa",
+    "name": "8 E 9th St Apt 2302",
+    "address": "Chicago, IL 60605",
+    "description": " Granite Countertops Stainless Steel Appliances Dishwasher & Microwave Hardwood Flooring Washer/Dryer in-unit Ample Closet Space Central Heat/AC Large Windows w/ City Views Pet Friendly Community",
+    "regularPrice": 20000
+  },
+  {
+    "_id": "67e18ddeb6097d78f294bfbc",
+    "name": "839 S Miller St #2",
+    "address": " Chicago, IL 60607",
+    "description": "Welcome to your dream condo! This stunning oversized unit features an open layout that maximizes space and natural light, creating a warm and inviting atmosphere. The large living room is perfect for entertaining, and there's ample room for a spacious dining area or a home office setup, allowing you to tailor the space to your needs. ",
+    "regularPrice": 25000
+  },
+  {
+    "_id": "680b460263c38156dc8a462f",
+    "name": "Testing Property",
+    "address": "test",
+    "description": "test",
+    "regularPrice": 50
+  },
+  {
+    "_id": "680e8b4a5404cb07562121bc",
+    "name": "Varshith's Listing",
+    "address": "test address",
+    "description": "This is a test property",
+    "regularPrice": 50
+  },
+  {
+    "_id": "6813d40613632945616ac2da",
+    "name": "Post Chicago853 ",
+    "address": "Post Chicago853 W Blackhawk St,Chicago, IL 60642",
+    "description": "Welcome to Post Chicago A Modern & Connected Community in Lincoln Park Post Chicago offers a forward-thinking living experience designed for convenience, comfort, and connection. ",
+    "regularPrice": 25000
+  },
+  {
+    "_id": "682817142853cd5dd8d38d18",
+    "name": "Praneeth's Listing",
+    "address": "test",
+    "description": "test",
+    "regularPrice": 50
+  },
+  {
+    "_id": "68281a852853cd5dd8d38d32",
+    "name": "Charan's Listing",
+    "address": "Address to Charan's Listing",
+    "description": "This is Charan's Listing",
+    "regularPrice": 50000
+  }
+]

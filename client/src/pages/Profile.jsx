@@ -1,11 +1,13 @@
-import { useSelector } from 'react-redux';
-import { useRef, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useRef, useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
 } from 'firebase/storage';
+import { PiCamera, PiPencilSimple, PiTrash, PiPlus } from 'react-icons/pi';
 import { app } from '../firebase';
 import {
   updateUserStart,
@@ -16,67 +18,102 @@ import {
   deleteUserSuccess,
   signOutUserStart,
 } from '../redux/user/userSlice';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import AuthErrorDialog from '../components/AuthErrorDialog';
-import ParallaxFadeIn from '../components/ui/parallax-fadein';
-import { InteractiveHoverButton } from "../components/ui/interactive-hover-button";
+import { price, priceShort, activePrice } from '../lib/format';
+
+const FALLBACK =
+  'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80&auto=format&fit=crop';
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser, loading, error } = useSelector((state) => state.user);
-  const [file, setFile] = useState(undefined);
-  const [filePerc, setFilePerc] = useState(0);
-  const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [showListingsError, setShowListingsError] = useState(false);
-  const [userListings, setUserListings] = useState([]);
-  const [loadingListings, setLoadingListings] = useState(false);
-  const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorDialogMsg, setErrorDialogMsg] = useState('');
-  const [errorDialogTitle, setErrorDialogTitle] = useState('Error');
+  const { currentUser, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  // firebase storage
-  // allow read;
-  // allow write: if
-  // request.resource.size < 2 * 1024 * 1024 &&
-  // request.resource.contentType.matches('image/.*')
+  const [file, setFile] = useState(undefined);
+  const [filePerc, setFilePerc] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState('');
+  const [formData, setFormData] = useState({});
+  const [userListings, setUserListings] = useState([]);
+  const [listingsLoading, setListingsLoading] = useState(true);
+  const [listingsError, setListingsError] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [dialog, setDialog] = useState({ open: false, title: '', message: '' });
+
+  const notify = (title, message) => setDialog({ open: true, title, message });
 
   useEffect(() => {
-    if (file) {
-      handleFileUpload(file);
-    }
+    if (file) handleFileUpload(file);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 
+  // Listings load with the page. The old build hid them behind a button.
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const res = await fetch(`/api/user/listings/${currentUser._id}`, {
+          credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success === false) throw new Error();
+        setUserListings(data.listings || []);
+      } catch {
+        setListingsError(true);
+      } finally {
+        setListingsLoading(false);
+      }
+    };
+    run();
+  }, [currentUser._id]);
+
+  const portfolio = useMemo(() => {
+    if (!userListings.length) return null;
+    const rent = userListings.filter((l) => l.type === 'rent');
+    const sale = userListings.filter((l) => l.type === 'sale');
+    const monthly = rent.reduce((sum, l) => sum + Number(activePrice(l)), 0);
+    const saleValue = sale.reduce((sum, l) => sum + Number(activePrice(l)), 0);
+    const peak = Math.max(...userListings.map((l) => Number(activePrice(l))), 1);
+
+    return {
+      rent,
+      sale,
+      peak,
+      tiles: [
+        { value: String(userListings.length), label: 'listings' },
+        { value: priceShort(monthly), label: 'monthly rent' },
+        { value: priceShort(saleValue), label: 'sale value' },
+        {
+          value: String(userListings.filter((l) => l.offer).length),
+          label: 'discounted',
+        },
+      ],
+    };
+  }, [userListings]);
+
   const handleFileUpload = (file) => {
+    setFileUploadError('');
     const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);
+    const storageRef = ref(storage, new Date().getTime() + file.name);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
       'state_changed',
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePerc(Math.round(progress));
-      },
-      (error) => {
-        setFileUploadError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })
-        );
-      }
+      (snapshot) =>
+        setFilePerc(
+          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+        ),
+      () =>
+        setFileUploadError(
+          'Image upload failed. Firebase Storage is unavailable for this project, so the photo could not be saved.'
+        ),
+      () =>
+        getDownloadURL(uploadTask.snapshot.ref).then((url) =>
+          setFormData((f) => ({ ...f, avatar: url }))
+        )
     );
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
+  const handleChange = (e) =>
+    setFormData((f) => ({ ...f, [e.target.id]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,34 +121,31 @@ export default function Profile() {
       dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
         credentials: 'include',
       });
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
-        setErrorDialogTitle('Profile Update Error');
-        setErrorDialogMsg(data.message || 'Failed to update profile.');
-        setShowErrorDialog(true);
+        notify('Update failed', data.message || 'We could not save your changes.');
         return;
       }
-
       dispatch(updateUserSuccess(data));
-      setErrorDialogTitle('Success');
-      setErrorDialogMsg('User is updated successfully!');
-      setShowErrorDialog(true);
+      notify('Success', 'Your profile has been updated.');
     } catch (error) {
       dispatch(updateUserFailure(error.message));
-      setErrorDialogTitle('Profile Update Error');
-      setErrorDialogMsg(error.message || 'Failed to update profile.');
-      setShowErrorDialog(true);
+      notify('Update failed', 'We could not reach the server. Please try again.');
     }
   };
 
   const handleDeleteUser = async () => {
+    if (
+      !window.confirm(
+        'Delete your account permanently? Your listings will stay in the database but you will lose access to them.'
+      )
+    )
+      return;
     try {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
@@ -121,17 +155,13 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
-        setErrorDialogTitle('Delete Account Error');
-        setErrorDialogMsg(data.message || 'Failed to delete account.');
-        setShowErrorDialog(true);
+        notify('Delete failed', data.message || 'We could not delete your account.');
         return;
       }
       dispatch(deleteUserSuccess(data));
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
-      setErrorDialogTitle('Delete Account Error');
-      setErrorDialogMsg(error.message || 'Failed to delete account.');
-      setShowErrorDialog(true);
+      notify('Delete failed', 'We could not reach the server. Please try again.');
     }
   };
 
@@ -146,96 +176,55 @@ export default function Profile() {
       }
       dispatch(deleteUserSuccess(data));
     } catch (error) {
-      dispatch(deleteUserFailure(data.message));
-    }
-  };
-
-  const handleShowListings = async () => {
-    try {
-      setShowListingsError(false);
-      setLoadingListings(true);
-      const res = await fetch(`/api/user/listings/${currentUser._id}`, {
-        credentials: 'include',
-      });
-      const data = await res.json();
-      setLoadingListings(false);
-      if (data.success === false) {
-        setShowListingsError(true);
-        return;
-      }
-      setUserListings(data.listings); 
-    } catch (error) {
-      setLoadingListings(false);
-      setShowListingsError(true);
+      dispatch(deleteUserFailure(error.message));
     }
   };
 
   const handleListingDelete = async (listingId) => {
+    if (!window.confirm('Delete this listing permanently?')) return;
+    setDeletingId(listingId);
     try {
-      setLoadingListings(true);
       const res = await fetch(`/api/listing/delete/${listingId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
       const data = await res.json();
-      setLoadingListings(false);
       if (data.success === false) {
-        console.log(data.message);
+        notify('Delete failed', data.message || 'We could not delete that listing.');
         return;
       }
-      setUserListings((prev) =>
-        prev.filter((listing) => listing._id !== listingId)
-      );
-    } catch (error) {
-      setLoadingListings(false);
-      console.log(error);
-    }
-  };
-
-  const handleListingUpdate = async (listingId, updateData) => {
-    try {
-      setLoadingListings(true);
-      const res = await fetch(`/api/listing/update/${listingId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      setLoadingListings(false);
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
-      setUserListings((prev) =>
-        prev.map((listing) =>
-          listing._id === listingId ? { ...listing, ...updateData } : listing
-        )
-      );
-    } catch (error) {
-      setLoadingListings(false);
-      console.log(error);
+      setUserListings((prev) => prev.filter((l) => l._id !== listingId));
+    } catch {
+      notify('Delete failed', 'We could not reach the server. Please try again.');
+    } finally {
+      setDeletingId(null);
     }
   };
 
   return (
-    <ParallaxFadeIn>
-      <div className='p-3 max-w-lg mx-auto'>
-        {loadingListings && (
-          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50'>
-            <div className='loader border-4 border-blue-500 border-t-transparent rounded-full w-12 h-12 animate-spin'></div>
-          </div>
-        )}
-        <AuthErrorDialog
-          open={showErrorDialog}
-          onOpenChange={setShowErrorDialog}
-          errorMessage={errorDialogMsg}
-          errorTitle={errorDialogTitle}
-        />
-        <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+    <div className='shell max-w-3xl py-12 sm:py-16'>
+      <AuthErrorDialog
+        open={dialog.open}
+        onOpenChange={(open) => setDialog((d) => ({ ...d, open }))}
+        errorTitle={dialog.title}
+        errorMessage={dialog.message}
+      />
+
+      <header className='flex flex-wrap items-center justify-between gap-4'>
+        <div>
+          <h1 className='text-3xl font-semibold'>Your account</h1>
+          <p className='mt-1.5 text-muted'>{currentUser.email}</p>
+        </div>
+        <button onClick={handleSignOut} className='btn btn-md btn-secondary'>
+          Sign out
+        </button>
+      </header>
+
+      {/* Account details */}
+      <section className='card mt-10 p-6 sm:p-8'>
+        <h2 className='text-lg font-semibold'>Profile</h2>
+
+        <form onSubmit={handleSubmit} className='mt-6 flex flex-col gap-5'>
           <input
             onChange={(e) => setFile(e.target.files[0])}
             type='file'
@@ -243,125 +232,273 @@ export default function Profile() {
             hidden
             accept='image/*'
           />
-          <img
-            onClick={() => fileRef.current.click()}
-            src={formData.avatar || currentUser.avatar}
-            alt='profile'
-            className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
-          />
-          <p className='text-sm self-center'>
-            {fileUploadError ? (
-              <span className='text-red-700'>
-                Error Image upload (image must be less than 2 mb)
-              </span>
-            ) : filePerc > 0 && filePerc < 100 ? (
-              <span className='text-slate-700'>{`Uploading ${filePerc}%`}</span>
-            ) : filePerc === 100 ? (
-              <span className='text-green-700'>Image successfully uploaded!</span>
-            ) : (
-              ''
-            )}
-          </p>
-          <input
-            type='text'
-            placeholder='Username'
-            defaultValue={currentUser.username}
-            id='username'
-            className='border p-3 rounded-lg'
-            onChange={handleChange}
-          />
-          <input
-            type='email'
-            placeholder='Email'
-            id='email'
-            defaultValue={currentUser.email}
-            className='border p-3 rounded-lg'
-            onChange={handleChange}
-          />
-          <input
-            type='password'
-            placeholder='Password'
-            onChange={handleChange}
-            id='password'
-            className='border p-3 rounded-lg'
-          />
-          <input
-            type='text'
-            placeholder='Phone'
-            className='border p-3 rounded-lg'
-            id='phone'
-            onChange={handleChange}
-          />
-          <button
-            disabled={loading}
-            className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
-          >
-            {loading ? 'Loading...' : 'Update'}
-          </button>
-          <Link
-            className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'
-            to={'/create-listing'}
-          >
-            Create Listing
-          </Link>
-        </form>
-        <div className='flex justify-between mt-5'>
-          <span
-            onClick={handleDeleteUser}
-            className='text-red-700 cursor-pointer'
-          >
-            Delete account
-          </span>
-          <InteractiveHoverButton text="Sign Out" onClick={handleSignOut} className="!w-32" />
-        </div>
 
-        <button onClick={handleShowListings} className='text-green-700 w-full'>
-          Show Listings
-        </button>
-        <p className='text-red-700 mt-5'>
-          {showListingsError ? 'Error showing listings' : ''}
-        </p>
-
-        {userListings && userListings.length > 0 && (
-          <div className='flex flex-col gap-4'>
-            <h1 className='text-center mt-7 text-2xl font-semibold'>
-              Your Listings
-            </h1>
-            {userListings.map((listing) => (
-              <div
-                key={listing._id}
-                className='border rounded-lg p-3 flex justify-between items-center gap-4'
+          <div className='flex items-center gap-5'>
+            <button
+              type='button'
+              onClick={() => fileRef.current.click()}
+              className='group relative h-20 w-20 shrink-0 overflow-hidden rounded-card border'
+              aria-label='Change profile photo'
+            >
+              <img
+                src={formData.avatar || currentUser.avatar}
+                alt=''
+                className='h-full w-full object-cover'
+              />
+              <span
+                className='absolute inset-0 flex items-center justify-center bg-[rgb(var(--shadow-tint))]/55
+                           opacity-0 transition-opacity group-hover:opacity-100'
               >
-                <Link to={`/listing/${listing._id}`}>
-                  <img
-                    src={listing.imageUrls[0]}
-                    alt='listing cover'
-                    className='h-16 w-16 object-contain'
-                  />
-                </Link>
-                <Link
-                  className='text-slate-700 font-semibold  hover:underline truncate flex-1'
-                  to={`/listing/${listing._id}`}
-                >
-                  <p>{listing.name}</p>
-                </Link>
+                <PiCamera aria-hidden='true' className='h-5 w-5 text-white' />
+              </span>
+            </button>
 
-                <div className='flex flex-col item-center'>
-                  <button
-                    onClick={() => handleListingDelete(listing._id)}
-                    className='text-red-700 uppercase'
-                  >
-                    Delete
-                  </button>
-                  <Link to={`/update-listing/${listing._id}`}>
-                    <button className='text-green-700 uppercase'>Edit</button>
-                  </Link>
-                </div>
+            <div className='min-w-0'>
+              <p className='font-medium'>{currentUser.username}</p>
+              {fileUploadError ? (
+                <p className='mt-1 text-[0.8125rem] leading-snug text-danger'>
+                  {fileUploadError}
+                </p>
+              ) : filePerc > 0 && filePerc < 100 ? (
+                <p className='tnum mt-1 text-[0.8125rem] text-muted'>
+                  Uploading {filePerc}%
+                </p>
+              ) : filePerc === 100 ? (
+                <p className='mt-1 text-[0.8125rem] text-accent-ink'>
+                  Photo uploaded. Save to apply it.
+                </p>
+              ) : (
+                <p className='mt-1 text-[0.8125rem] text-muted'>
+                  Click the photo to change it.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className='grid gap-5 sm:grid-cols-2'>
+            <div className='field'>
+              <label htmlFor='username' className='label'>
+                Username
+              </label>
+              <input
+                id='username'
+                type='text'
+                defaultValue={currentUser.username}
+                className='input'
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className='field'>
+              <label htmlFor='email' className='label'>
+                Email
+              </label>
+              <input
+                id='email'
+                type='email'
+                defaultValue={currentUser.email}
+                className='input'
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className='field'>
+              <label htmlFor='password' className='label'>
+                New password
+              </label>
+              <input
+                id='password'
+                type='password'
+                autoComplete='new-password'
+                className='input'
+                onChange={handleChange}
+              />
+              <p className='hint'>Leave blank to keep your current password.</p>
+            </div>
+
+            <div className='field'>
+              <label htmlFor='phone' className='label'>
+                Phone
+              </label>
+              <input
+                id='phone'
+                type='tel'
+                defaultValue={currentUser.phone || ''}
+                className='input'
+                onChange={handleChange}
+              />
+              <p className='hint'>Used for WhatsApp enquiries on your listings.</p>
+            </div>
+          </div>
+
+          <div className='flex gap-3'>
+            <button disabled={loading} className='btn btn-md btn-primary'>
+              {loading ? 'Saving' : 'Save changes'}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      {/* Portfolio at a glance, derived from the listings already loaded. */}
+      {portfolio && (
+        <section className='card-raised mt-12 p-6 sm:p-8'>
+          <h2 className='text-lg font-semibold'>Your portfolio</h2>
+
+          <div className='mt-6 grid grid-cols-2 gap-y-6 sm:grid-cols-4'>
+            {portfolio.tiles.map((t) => (
+              <div key={t.label}>
+                <p className='tnum font-display text-2xl font-semibold tracking-tight'>
+                  {t.value}
+                </p>
+                <p className='mt-0.5 text-[0.8125rem] text-muted'>{t.label}</p>
               </div>
             ))}
           </div>
-        )}
-      </div>
-    </ParallaxFadeIn>
+
+          <div className='mt-8 border-t pt-6'>
+            <h3 className='text-[0.8125rem] font-medium text-muted'>
+              Asking price by listing
+            </h3>
+            <ul className='mt-4 flex flex-col gap-3'>
+              {userListings.map((l) => {
+                const value = Number(activePrice(l));
+                return (
+                  <li key={l._id} className='flex items-center gap-4'>
+                    <span className='w-32 shrink-0 truncate text-[0.8125rem] text-muted sm:w-44'>
+                      {l.name}
+                    </span>
+                    <span className='h-2 flex-1 overflow-hidden rounded-full bg-sunken'>
+                      <span
+                        className={`block h-full rounded-full ${
+                          l.type === 'rent' ? 'bg-accent' : 'bg-ink'
+                        }`}
+                        style={{
+                          width: `${Math.max(3, (value / portfolio.peak) * 100)}%`,
+                        }}
+                      />
+                    </span>
+                    <span className='tnum w-20 shrink-0 text-right text-[0.8125rem]'>
+                      {priceShort(value)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className='mt-4 flex items-center gap-4 text-[0.75rem] text-muted'>
+              <span className='flex items-center gap-1.5'>
+                <span className='h-2 w-2 rounded-full bg-accent' />
+                rent, per month
+              </span>
+              <span className='flex items-center gap-1.5'>
+                <span className='h-2 w-2 rounded-full bg-ink' />
+                sale
+              </span>
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Listings */}
+      <section className='mt-12'>
+        <div className='flex flex-wrap items-center justify-between gap-4'>
+          <h2 className='text-lg font-semibold'>Your listings</h2>
+          <Link to='/create-listing' className='btn btn-sm btn-secondary'>
+            <PiPlus aria-hidden='true' className='h-4 w-4' />
+            New listing
+          </Link>
+        </div>
+
+        <div className='mt-5'>
+          {listingsLoading ? (
+            <div className='flex flex-col gap-3'>
+              {Array.from({ length: 2 }, (_, i) => (
+                <div key={i} className='skeleton h-[88px] rounded-card' />
+              ))}
+            </div>
+          ) : listingsError ? (
+            <p className='rounded-control bg-danger-soft px-4 py-3 text-sm text-danger'>
+              We could not load your listings. Please refresh the page.
+            </p>
+          ) : userListings.length === 0 ? (
+            <div className='rounded-card border border-dashed px-6 py-14 text-center'>
+              <h3 className='font-medium'>You have not listed anything yet</h3>
+              <p className='mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted'>
+                Publish photos, price, rooms and amenities. Interested people
+                reach you by email or WhatsApp.
+              </p>
+              <Link to='/create-listing' className='btn btn-md btn-primary mt-6'>
+                Create your first listing
+              </Link>
+            </div>
+          ) : (
+            <ul className='flex flex-col gap-3'>
+              {userListings.map((listing) => (
+                <li
+                  key={listing._id}
+                  className='card flex items-center gap-4 p-3'
+                >
+                  <Link
+                    to={`/listing/${listing._id}`}
+                    className='h-16 w-20 shrink-0 overflow-hidden rounded-control bg-sunken'
+                  >
+                    <img
+                      src={listing.imageUrls?.[0] || FALLBACK}
+                      onError={(e) => {
+                        e.currentTarget.src = FALLBACK;
+                      }}
+                      alt=''
+                      className='h-full w-full object-cover'
+                    />
+                  </Link>
+
+                  <div className='min-w-0 flex-1'>
+                    <Link
+                      to={`/listing/${listing._id}`}
+                      className='block truncate font-medium hover:text-accent-ink'
+                    >
+                      {listing.name}
+                    </Link>
+                    <p className='tnum mt-0.5 text-sm text-muted'>
+                      {price(activePrice(listing))}
+                      <span className='mx-1.5 text-faint'>/</span>
+                      {listing.type === 'rent' ? 'Rent' : 'Sale'}
+                    </p>
+                  </div>
+
+                  <div className='flex shrink-0 gap-1'>
+                    <Link
+                      to={`/update-listing/${listing._id}`}
+                      className='btn btn-sm btn-ghost px-2'
+                      aria-label={`Edit ${listing.name}`}
+                    >
+                      <PiPencilSimple className='h-4 w-4' />
+                    </Link>
+                    <button
+                      onClick={() => handleListingDelete(listing._id)}
+                      disabled={deletingId === listing._id}
+                      className='btn btn-sm btn-ghost px-2 text-danger hover:bg-danger-soft'
+                      aria-label={`Delete ${listing.name}`}
+                    >
+                      <PiTrash className='h-4 w-4' />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      {/* Account removal, kept away from everyday actions */}
+      <section className='mt-16 border-t pt-8'>
+        <h2 className='font-medium'>Delete account</h2>
+        <p className='mt-1.5 max-w-lg text-sm leading-relaxed text-muted'>
+          This removes your account permanently. It cannot be undone.
+        </p>
+        <button onClick={handleDeleteUser} className='btn btn-md btn-danger mt-4'>
+          Delete my account
+        </button>
+      </section>
+    </div>
   );
 }
