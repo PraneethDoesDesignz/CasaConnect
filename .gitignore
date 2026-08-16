@@ -22,4 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment
 .env
+.env.*
+!.env.example
+
+# AI agent tooling, installed locally per machine
+.agents/
+.claude/
+skills-lock.json
+
+# Data backups written by api/scripts, contain storage download tokens
+api/scripts/*.backup.json
