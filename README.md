@@ -57,13 +57,13 @@ complete second surface rather than an afterthought.
 
 ### Core concepts
 
-| Term | Meaning |
-| --- | --- |
-| **Listing** | One property, owned by exactly one user. Carries up to six images, a type, prices, rooms and amenity flags. |
-| **Type** | Either `rent` or `sale`. Rentals price per month, sales price outright. |
-| **Offer** | A flag on a listing. When set, `discountPrice` becomes the price actually shown, and the saving is badged. |
-| **Saved** | A shortlist held in the visitor's browser. Not attached to an account and not synced across devices. |
-| **Lead** | A Salesforce record written when a user signs up, updates their profile, or creates, updates or deletes a listing. |
+| Term        | Meaning                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Listing** | One property, owned by exactly one user. Carries up to six images, a type, prices, rooms and amenity flags.        |
+| **Type**    | Either `rent` or `sale`. Rentals price per month, sales price outright.                                            |
+| **Offer**   | A flag on a listing. When set, `discountPrice` becomes the price actually shown, and the saving is badged.         |
+| **Saved**   | A shortlist held in the visitor's browser. Not attached to an account and not synced across devices.               |
+| **Lead**    | A Salesforce record written when a user signs up, updates their profile, or creates, updates or deletes a listing. |
 
 ---
 
@@ -114,8 +114,8 @@ them, so no duplicated dark-mode markup exists anywhere in the codebase.
 
 ### Component detail
 
-| Statistics band | Filter rail | Price panel |
-| --- | --- | --- |
+| Statistics band                                                 | Filter rail                                                         | Price panel                                                          |
+| --------------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | ![Statistics band](client/public/screenshots/home-04-stats.jpg) | ![Filter rail](client/public/screenshots/search-03-filter-rail.jpg) | ![Price panel](client/public/screenshots/listing-04-price-panel.jpg) |
 
 Empty and error cases are captured too, including
@@ -248,22 +248,22 @@ window before MongoDB has connected. Requests arriving in that window fail.
 
 ## 5. Tech stack
 
-| Layer | Technology |
-| --- | --- |
-| Build | Vite 4 with the SWC React plugin |
-| Interface | React 18, React Router 6 |
-| Styling | Tailwind CSS 3 with CSS custom properties for theming |
-| State | Redux Toolkit with redux-persist (localStorage) |
-| Motion | Motion (`motion/react`) |
-| Icons | react-icons, Phosphor set (`react-icons/pi`) |
-| Type | Bricolage Grotesque and Schibsted Grotesk, self-hosted via Fontsource |
-| Dialogs | Radix UI Alert Dialog |
-| Server | Node.js, Express 4 |
-| Auth | jsonwebtoken, bcryptjs, Firebase Authentication |
-| Data | MongoDB with Mongoose 7 |
-| CRM | Salesforce via jsforce |
-| Mail | Nodemailer |
-| Scheduling | node-cron |
+| Layer      | Technology                                                            |
+| ---------- | --------------------------------------------------------------------- |
+| Build      | Vite 4 with the SWC React plugin                                      |
+| Interface  | React 18, React Router 6                                              |
+| Styling    | Tailwind CSS 3 with CSS custom properties for theming                 |
+| State      | Redux Toolkit with redux-persist (localStorage)                       |
+| Motion     | Motion (`motion/react`)                                               |
+| Icons      | react-icons, Phosphor set (`react-icons/pi`)                          |
+| Type       | Bricolage Grotesque and Schibsted Grotesk, self-hosted via Fontsource |
+| Dialogs    | Radix UI Alert Dialog                                                 |
+| Server     | Node.js, Express 4                                                    |
+| Auth       | jsonwebtoken, bcryptjs, Firebase Authentication                       |
+| Data       | MongoDB with Mongoose 7                                               |
+| CRM        | Salesforce via jsforce                                                |
+| Mail       | Nodemailer                                                            |
+| Scheduling | node-cron                                                             |
 
 ---
 
@@ -311,15 +311,15 @@ no Vite proxy.
 
 ### Available scripts
 
-| Location | Script | Purpose |
-| --- | --- | --- |
-| root | `npm run dev` | API under nodemon with reload on change |
-| root | `npm start` | API once, no watcher |
-| root | `npm run build` | Install both packages and build the client |
-| client | `npm run dev` | Vite dev server with hot module replacement |
-| client | `npm run build` | Production build into `client/dist` |
-| client | `npm run preview` | Serve the built output locally |
-| client | `npm run lint` | ESLint over `src` |
+| Location | Script            | Purpose                                     |
+| -------- | ----------------- | ------------------------------------------- |
+| root     | `npm run dev`     | API under nodemon with reload on change     |
+| root     | `npm start`       | API once, no watcher                        |
+| root     | `npm run build`   | Install both packages and build the client  |
+| client   | `npm run dev`     | Vite dev server with hot module replacement |
+| client   | `npm run build`   | Production build into `client/dist`         |
+| client   | `npm run preview` | Serve the built output locally              |
+| client   | `npm run lint`    | ESLint over `src`                           |
 
 ---
 
@@ -340,20 +340,20 @@ VITE_FIREBASE_API_KEY=your-firebase-web-api-key
 
 ### Full reference
 
-| Variable | File | Required | Purpose |
-| --- | --- | --- | --- |
-| `MONGO` | root | Yes | MongoDB connection string |
-| `JWT_SECRET` | root | Yes | Signs and verifies the `access_token` cookie |
-| `VITE_FIREBASE_API_KEY` | `client` | For Google sign-in | Firebase web API key |
-| `EMAIL_SERVICE` | root | No | Nodemailer transport, defaults to `gmail` |
-| `EMAIL_USER` | root | No | Sending address |
-| `EMAIL_PASS` | root | No | App password for that address |
-| `SALESFORCE_LOGIN_URL` | root | No | Salesforce login endpoint |
-| `SALESFORCE_CLIENT_ID` | root | No | Connected app consumer key |
-| `SALESFORCE_CLIENT_SECRET` | root | No | Connected app consumer secret |
-| `SALESFORCE_USERNAME` | root | No | Integration user |
-| `SALESFORCE_PASSWORD` | root | No | Integration user password |
-| `SALESFORCE_SECURITY_TOKEN` | root | No | Appended to the password on login |
+| Variable                    | File     | Required           | Purpose                                      |
+| --------------------------- | -------- | ------------------ | -------------------------------------------- |
+| `MONGO`                     | root     | Yes                | MongoDB connection string                    |
+| `JWT_SECRET`                | root     | Yes                | Signs and verifies the `access_token` cookie |
+| `VITE_FIREBASE_API_KEY`     | `client` | For Google sign-in | Firebase web API key                         |
+| `EMAIL_SERVICE`             | root     | No                 | Nodemailer transport, defaults to `gmail`    |
+| `EMAIL_USER`                | root     | No                 | Sending address                              |
+| `EMAIL_PASS`                | root     | No                 | App password for that address                |
+| `SALESFORCE_LOGIN_URL`      | root     | No                 | Salesforce login endpoint                    |
+| `SALESFORCE_CLIENT_ID`      | root     | No                 | Connected app consumer key                   |
+| `SALESFORCE_CLIENT_SECRET`  | root     | No                 | Connected app consumer secret                |
+| `SALESFORCE_USERNAME`       | root     | No                 | Integration user                             |
+| `SALESFORCE_PASSWORD`       | root     | No                 | Integration user password                    |
+| `SALESFORCE_SECURITY_TOKEN` | root     | No                 | Appended to the password on login            |
 
 Only `VITE_`-prefixed variables are exposed to browser code, and Vite reads them
 from `client/.env` alone. Putting a `VITE_` variable in the root `.env` has no
@@ -378,17 +378,22 @@ Authentication column:
 
 ### Auth, `/api/auth`
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| POST | `/signup` | Public | Register with email and password |
-| POST | `/signin` | Public | Sign in, sets the cookie |
-| POST | `/google` | Public | Sign in or register from a Google profile |
-| GET | `/signout` | Public | Clear the cookie |
+| Method | Path       | Auth   | Purpose                                   |
+| ------ | ---------- | ------ | ----------------------------------------- |
+| POST   | `/signup`  | Public | Register with email and password          |
+| POST   | `/signin`  | Public | Sign in, sets the cookie                  |
+| POST   | `/google`  | Public | Sign in or register from a Google profile |
+| GET    | `/signout` | Public | Clear the cookie                          |
 
 **POST `/api/auth/signup`**
 
 ```json
-{ "username": "asha", "email": "asha@example.com", "password": "secret123", "phone": "9876543210" }
+{
+  "username": "asha",
+  "email": "asha@example.com",
+  "password": "secret123",
+  "phone": "9876543210"
+}
 ```
 
 `phone` is optional. On success responds `201` with the string
@@ -417,13 +422,13 @@ random characters. Responds `200` with the user and sets the cookie.
 
 ### User, `/api/user`
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| GET | `/test` | Public | Health check, returns `{ message }` |
-| POST | `/update/:id` | Cookie | Update your own account |
-| DELETE | `/delete/:id` | Cookie | Delete your own account |
-| GET | `/listings/:id` | Cookie | List your own listings |
-| GET | `/:id` | Cookie | Fetch one user, password stripped |
+| Method | Path            | Auth   | Purpose                             |
+| ------ | --------------- | ------ | ----------------------------------- |
+| GET    | `/test`         | Public | Health check, returns `{ message }` |
+| POST   | `/update/:id`   | Cookie | Update your own account             |
+| DELETE | `/delete/:id`   | Cookie | Delete your own account             |
+| GET    | `/listings/:id` | Cookie | List your own listings              |
+| GET    | `/:id`          | Cookie | Fetch one user, password stripped   |
 
 `update` and `delete` compare `:id` against the authenticated user and return
 `401` on mismatch. `update` accepts any of `username`, `email`, `password`,
@@ -439,30 +444,30 @@ which is why contacting an owner requires being signed in.
 
 ### Listing, `/api/listing`
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| POST | `/create` | Cookie | Publish a listing |
-| POST | `/update/:id` | Cookie, owner | Update a listing |
-| DELETE | `/delete/:id` | Cookie, owner | Delete a listing |
-| GET | `/get/:id` | Public | Fetch one listing |
-| GET | `/get` | Public | Query listings |
+| Method | Path          | Auth          | Purpose           |
+| ------ | ------------- | ------------- | ----------------- |
+| POST   | `/create`     | Cookie        | Publish a listing |
+| POST   | `/update/:id` | Cookie, owner | Update a listing  |
+| DELETE | `/delete/:id` | Cookie, owner | Delete a listing  |
+| GET    | `/get/:id`    | Public        | Fetch one listing |
+| GET    | `/get`        | Public        | Query listings    |
 
 `update` and `delete` compare `listing.userRef` against the authenticated user
 and return `401` on mismatch, so ownership cannot be bypassed from the client.
 
 **GET `/api/listing/get`** query parameters:
 
-| Parameter | Type | Default | Behaviour |
-| --- | --- | --- | --- |
-| `searchTerm` | string | `''` | Case-insensitive regex against `name` |
-| `type` | `rent`, `sale`, `all` | `all` | `all` matches both |
-| `offer` | `true`, `false` | unset | `false` or unset matches both states |
-| `parking` | `true`, `false` | unset | Same permissive behaviour |
-| `furnished` | `true`, `false` | unset | Same permissive behaviour |
-| `sort` | field name | `createdAt` | Any listing field |
-| `order` | `asc`, `desc` | `desc` | Sort direction |
-| `limit` | number | `9` | Page size |
-| `startIndex` | number | `0` | Documents to skip |
+| Parameter    | Type                  | Default     | Behaviour                             |
+| ------------ | --------------------- | ----------- | ------------------------------------- |
+| `searchTerm` | string                | `''`        | Case-insensitive regex against `name` |
+| `type`       | `rent`, `sale`, `all` | `all`       | `all` matches both                    |
+| `offer`      | `true`, `false`       | unset       | `false` or unset matches both states  |
+| `parking`    | `true`, `false`       | unset       | Same permissive behaviour             |
+| `furnished`  | `true`, `false`       | unset       | Same permissive behaviour             |
+| `sort`       | field name            | `createdAt` | Any listing field                     |
+| `order`      | `asc`, `desc`         | `desc`      | Sort direction                        |
+| `limit`      | number                | `9`         | Page size                             |
+| `startIndex` | number                | `0`         | Documents to skip                     |
 
 Note the permissive booleans: `parking=false` does **not** return only listings
 without parking, it returns both. Filters can narrow but never invert.
@@ -475,11 +480,11 @@ GET /api/listing/get?type=rent&furnished=true&sort=regularPrice&order=asc&limit=
 
 ### Lead, `/api/lead`
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| POST | `/` | Bearer | Create a Salesforce lead |
-| GET | `/:id` | Bearer | Retrieve a lead |
-| PUT | `/:id` | Bearer | Update a lead |
+| Method | Path   | Auth   | Purpose                  |
+| ------ | ------ | ------ | ------------------------ |
+| POST   | `/`    | Bearer | Create a Salesforce lead |
+| GET    | `/:id` | Bearer | Retrieve a lead          |
+| PUT    | `/:id` | Bearer | Update a lead            |
 
 These proxy straight to Salesforce and are the only routes using bearer tokens.
 The client does not currently call them; leads are written as a side effect of
@@ -493,35 +498,35 @@ auth and listing operations instead.
 
 `api/models/user.model.js`
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `username` | String | Required, not unique |
-| `email` | String | Required, unique |
-| `password` | String | Required, bcrypt hash, stripped from every response |
-| `avatar` | String | Defaults to a placeholder image URL |
-| `phone` | String | Defaults to `""`, used for WhatsApp enquiries |
-| `createdAt`, `updatedAt` | Date | Added by `timestamps: true` |
+| Field                    | Type   | Notes                                               |
+| ------------------------ | ------ | --------------------------------------------------- |
+| `username`               | String | Required, not unique                                |
+| `email`                  | String | Required, unique                                    |
+| `password`               | String | Required, bcrypt hash, stripped from every response |
+| `avatar`                 | String | Defaults to a placeholder image URL                 |
+| `phone`                  | String | Defaults to `""`, used for WhatsApp enquiries       |
+| `createdAt`, `updatedAt` | Date   | Added by `timestamps: true`                         |
 
 ### Listing
 
 `api/models/listing.model.js`
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `name` | String | Required, 10 to 62 characters enforced client-side |
-| `description` | String | Required |
-| `address` | String | Required, free text, not geocoded |
-| `regularPrice` | Number | Required, rupees, per month when `type` is `rent` |
-| `discountPrice` | Number | Required, only meaningful when `offer` is true |
-| `bathrooms` | Number | Required |
-| `bedrooms` | Number | Required |
-| `furnished` | Boolean | Required |
-| `parking` | Boolean | Required |
-| `type` | String | Required, `rent` or `sale`, not enum-constrained in the schema |
-| `offer` | Boolean | Required |
-| `imageUrls` | Array | Required, up to six URLs, first is the cover |
-| `userRef` | String | Required, the owner's user id as a string |
-| `createdAt`, `updatedAt` | Date | Added by `timestamps: true` |
+| Field                    | Type    | Notes                                                          |
+| ------------------------ | ------- | -------------------------------------------------------------- |
+| `name`                   | String  | Required, 10 to 62 characters enforced client-side             |
+| `description`            | String  | Required                                                       |
+| `address`                | String  | Required, free text, not geocoded                              |
+| `regularPrice`           | Number  | Required, rupees, per month when `type` is `rent`              |
+| `discountPrice`          | Number  | Required, only meaningful when `offer` is true                 |
+| `bathrooms`              | Number  | Required                                                       |
+| `bedrooms`               | Number  | Required                                                       |
+| `furnished`              | Boolean | Required                                                       |
+| `parking`                | Boolean | Required                                                       |
+| `type`                   | String  | Required, `rent` or `sale`, not enum-constrained in the schema |
+| `offer`                  | Boolean | Required                                                       |
+| `imageUrls`              | Array   | Required, up to six URLs, first is the cover                   |
+| `userRef`                | String  | Required, the owner's user id as a string                      |
+| `createdAt`, `updatedAt` | Date    | Added by `timestamps: true`                                    |
 
 `userRef` is a plain `String` rather than an `ObjectId` reference, so Mongoose
 population is not available and ownership checks compare stringified ids.
@@ -574,19 +579,19 @@ clears both.
 
 ### Routes
 
-| Path | Component | Access |
-| --- | --- | --- |
-| `/` | `Home` | Public |
-| `/search` | `Search` | Public |
-| `/listing/:listingId` | `Listing` | Public |
-| `/about` | `About` | Public |
-| `/showcase` | `Showcase` | Public |
-| `/sign-in` | `SignIn` | Public |
-| `/sign-up` | `SignUp` | Public |
-| `/profile` | `Profile` | Signed in |
-| `/create-listing` | `CreateListing` | Signed in |
+| Path                         | Component       | Access    |
+| ---------------------------- | --------------- | --------- |
+| `/`                          | `Home`          | Public    |
+| `/search`                    | `Search`        | Public    |
+| `/listing/:listingId`        | `Listing`       | Public    |
+| `/about`                     | `About`         | Public    |
+| `/showcase`                  | `Showcase`      | Public    |
+| `/sign-in`                   | `SignIn`        | Public    |
+| `/sign-up`                   | `SignUp`        | Public    |
+| `/profile`                   | `Profile`       | Signed in |
+| `/create-listing`            | `CreateListing` | Signed in |
 | `/update-listing/:listingId` | `UpdateListing` | Signed in |
-| `*` | `NotFound` | Public |
+| `*`                          | `NotFound`      | Public    |
 
 Protected routes sit behind `PrivateRoute`, which renders an `Outlet` when a
 persisted user exists and redirects to `/sign-in` otherwise.
@@ -623,23 +628,23 @@ client/
 
 ### Notable components
 
-| Component | Responsibility |
-| --- | --- |
-| `ListingForm` | One form shared by create and update. Replaced two near-identical 390-line pages. |
-| `CommandPalette` | Global `Cmd+K` surface. Opened from anywhere via a custom DOM event, so no context provider is needed. |
-| `Gallery` | Mosaic plus lightbox with keyboard navigation and focus restoration. |
-| `PriceRange` | Dual-handle slider built from two stacked native range inputs, so both handles keep real keyboard and screen-reader behaviour. |
-| `ListingItem` | The repeated result card, including the save control. |
-| `AuthLayout` | Shared two-column frame so sign-in and sign-up read as one flow. |
-| `Squares` | The animated background. Pointer position lives in a ref, never in state. |
+| Component        | Responsibility                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `ListingForm`    | One form shared by create and update. Replaced two near-identical 390-line pages.                                              |
+| `CommandPalette` | Global `Cmd+K` surface. Opened from anywhere via a custom DOM event, so no context provider is needed.                         |
+| `Gallery`        | Mosaic plus lightbox with keyboard navigation and focus restoration.                                                           |
+| `PriceRange`     | Dual-handle slider built from two stacked native range inputs, so both handles keep real keyboard and screen-reader behaviour. |
+| `ListingItem`    | The repeated result card, including the save control.                                                                          |
+| `AuthLayout`     | Shared two-column frame so sign-in and sign-up read as one flow.                                                               |
+| `Squares`        | The animated background. Pointer position lives in a ref, never in state.                                                      |
 
 ### Hooks and helpers
 
-| Module | Exports | Notes |
-| --- | --- | --- |
-| `lib/format.js` | `price`, `priceShort`, `activePrice`, `priceSuffix` | Rupee formatting through `Intl.NumberFormat('en-IN')`. `priceShort` renders lakh and crore. |
-| `lib/useTheme.js` | `useTheme` | Reads and writes `casaconnect:theme`, applies `data-theme` to the root element, syncs across tabs. |
-| `lib/useSaved.js` | `useSaved` | Reads and writes `casaconnect:saved`. Uses a module-level listener set because `storage` events do not fire in the tab that made the change. |
+| Module            | Exports                                             | Notes                                                                                                                                        |
+| ----------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/format.js`   | `price`, `priceShort`, `activePrice`, `priceSuffix` | Rupee formatting through `Intl.NumberFormat('en-IN')`. `priceShort` renders lakh and crore.                                                  |
+| `lib/useTheme.js` | `useTheme`                                          | Reads and writes `casaconnect:theme`, applies `data-theme` to the root element, syncs across tabs.                                           |
+| `lib/useSaved.js` | `useSaved`                                          | Reads and writes `casaconnect:saved`. Uses a module-level listener set because `storage` events do not fire in the tab that made the change. |
 
 ### State management
 
@@ -676,30 +681,30 @@ anywhere in the application** and the two themes cannot drift apart.
 
 Stored as space-separated RGB channels so Tailwind's `<alpha-value>` works.
 
-| Token | Role | Light | Dark |
-| --- | --- | --- | --- |
-| `--canvas` | Page background | `251 251 250` | `13 13 12` |
-| `--surface` | Cards, inputs | `255 255 255` | `23 23 22` |
-| `--raised` | Elevated panels | `255 255 255` | `30 30 28` |
-| `--sunken` | Recessed fills | `244 244 242` | `31 31 29` |
-| `--ink` | Primary text | `26 26 24` | `242 242 238` |
-| `--muted` | Secondary text | `107 107 102` | `163 163 157` |
-| `--faint` | Icons, placeholders | `146 146 140` | `119 119 111` |
-| `--line` | Borders, hairlines | `228 228 224` | `46 46 43` |
-| `--accent` | The single accent | `31 81 55` | `125 196 155` |
-| `--on-accent` | Text on the accent | `255 255 255` | `13 13 12` |
-| `--danger` | Destructive states | `154 42 36` | `234 141 133` |
+| Token         | Role                | Light         | Dark          |
+| ------------- | ------------------- | ------------- | ------------- |
+| `--canvas`    | Page background     | `251 251 250` | `13 13 12`    |
+| `--surface`   | Cards, inputs       | `255 255 255` | `23 23 22`    |
+| `--raised`    | Elevated panels     | `255 255 255` | `30 30 28`    |
+| `--sunken`    | Recessed fills      | `244 244 242` | `31 31 29`    |
+| `--ink`       | Primary text        | `26 26 24`    | `242 242 238` |
+| `--muted`     | Secondary text      | `107 107 102` | `163 163 157` |
+| `--faint`     | Icons, placeholders | `146 146 140` | `119 119 111` |
+| `--line`      | Borders, hairlines  | `228 228 224` | `46 46 43`    |
+| `--accent`    | The single accent   | `31 81 55`    | `125 196 155` |
+| `--on-accent` | Text on the accent  | `255 255 255` | `13 13 12`    |
+| `--danger`    | Destructive states  | `154 42 36`   | `234 141 133` |
 
 One accent is used across the whole application. `--on-accent` flips with the
 theme, so a filled button keeps its contrast in both modes.
 
 ### Typography
 
-| Role | Face | Usage |
-| --- | --- | --- |
-| Display | Bricolage Grotesque Variable | `h1`, `h2`, `h3`, and large figures |
-| Text | Schibsted Grotesk Variable | Body, controls, labels |
-| Mono | System monospace stack | The few code and label uses, no download |
+| Role    | Face                         | Usage                                    |
+| ------- | ---------------------------- | ---------------------------------------- |
+| Display | Bricolage Grotesque Variable | `h1`, `h2`, `h3`, and large figures      |
+| Text    | Schibsted Grotesk Variable   | Body, controls, labels                   |
+| Mono    | System monospace stack       | The few code and label uses, no download |
 
 Headings carry `-0.025em` tracking, `h1` carries `-0.038em`. Hierarchy comes
 from weight and colour rather than raw size. `text-wrap: balance` is applied to
@@ -710,11 +715,11 @@ class for tabular figures so prices align in a column.
 
 One radius scale, applied consistently:
 
-| Token | Value | Used for |
-| --- | --- | --- |
-| `rounded-control` | 6px | Buttons, inputs, badges |
-| `rounded-card` | 12px | Cards, panels, dialogs |
-| `rounded-feature` | 20px | Hero surfaces, galleries, feature bands |
+| Token             | Value | Used for                                |
+| ----------------- | ----- | --------------------------------------- |
+| `rounded-control` | 6px   | Buttons, inputs, badges                 |
+| `rounded-card`    | 12px  | Cards, panels, dialogs                  |
+| `rounded-feature` | 20px  | Hero surfaces, galleries, feature bands |
 
 Page content sits in `.shell`, capped at 1240px with a 20px gutter that becomes
 32px at 640px and above. `.rail` reproduces that gutter arithmetic
@@ -788,10 +793,10 @@ is harmless here.
 Run from the repository root. Each writes a JSON backup before its first change
 and is safe to run more than once.
 
-| Script | Purpose |
-| --- | --- |
-| `node api/scripts/replaceImages.js` | Repoint every listing at hosted photography. Backs up to `api/scripts/imageUrls.backup.json`. |
-| `node api/scripts/reseedIndia.js` | Replace placeholder names, addresses and prices with Indian equivalents. Backs up to `api/scripts/listings.pre-india.backup.json`. |
+| Script                              | Purpose                                                                                                                            |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `node api/scripts/replaceImages.js` | Repoint every listing at hosted photography. Backs up to `api/scripts/imageUrls.backup.json`.                                      |
+| `node api/scripts/reseedIndia.js`   | Replace placeholder names, addresses and prices with Indian equivalents. Backs up to `api/scripts/listings.pre-india.backup.json`. |
 
 ---
 
@@ -834,12 +839,14 @@ way the listing controller already wraps its own:
 
 ```js
 try {
-  await createLead({ /* ... */ });
-  await sendFollowupEmail(email, username, 'welcome');
+  await createLead({
+    /* ... */
+  });
+  await sendFollowupEmail(email, username, "welcome");
 } catch (err) {
-  console.error('Signup side effect failed:', err.message);
+  console.error("Signup side effect failed:", err.message);
 }
-res.status(201).json('User created successfully!');
+res.status(201).json("User created successfully!");
 ```
 
 The same pattern applies to `updateUser` and `deleteUser`, which await
@@ -863,7 +870,7 @@ JWT-only. `firebaseAuth.js` is not imported by anything.
 
 `parking=false`, `furnished=false` and `offer=false` all match both states
 rather than selecting the negative case. There is no way to search for listings
-*without* parking.
+_without_ parking.
 
 ### Price filtering is client-side
 
@@ -887,16 +894,16 @@ path, which is a Mongo `$gte`/`$lte` range with server-side pagination.
 
 ## 17. Troubleshooting
 
-| Symptom | Cause and fix |
-| --- | --- |
-| `ECONNREFUSED` in the Vite proxy | The API is not up yet. Start it first and wait for `Server is running on port 3000!`. |
-| Registration reports failure but the account exists | The Salesforce bug above. Apply the `try`/`catch` fix, or configure the Salesforce variables. |
-| Images do not load | Listings point at a dead host. Run `node api/scripts/replaceImages.js`. |
-| Upload button fails on the listing form | Firebase Storage returns `402`. Paste an image URL instead. |
-| `401` on profile or listing actions | The `access_token` cookie is missing or expired while the persisted Redux session survives. Sign out and back in. |
-| Google sign-in does nothing | `VITE_FIREBASE_API_KEY` is missing from `client/.env`, or the dev origin is not authorised in the Firebase console. |
-| Screenshots 404 on `/showcase` | `client/public/screenshots` is missing. It is untracked until committed, so `git clean -fd` removes it. Commit the folder. |
-| Styles look unstyled after editing config | Restart the Vite dev server; `tailwind.config.js` is not hot-reloaded. |
+| Symptom                                             | Cause and fix                                                                                                              |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `ECONNREFUSED` in the Vite proxy                    | The API is not up yet. Start it first and wait for `Server is running on port 3000!`.                                      |
+| Registration reports failure but the account exists | The Salesforce bug above. Apply the `try`/`catch` fix, or configure the Salesforce variables.                              |
+| Images do not load                                  | Listings point at a dead host. Run `node api/scripts/replaceImages.js`.                                                    |
+| Upload button fails on the listing form             | Firebase Storage returns `402`. Paste an image URL instead.                                                                |
+| `401` on profile or listing actions                 | The `access_token` cookie is missing or expired while the persisted Redux session survives. Sign out and back in.          |
+| Google sign-in does nothing                         | `VITE_FIREBASE_API_KEY` is missing from `client/.env`, or the dev origin is not authorised in the Firebase console.        |
+| Screenshots 404 on `/showcase`                      | `client/public/screenshots` is missing. It is untracked until committed, so `git clean -fd` removes it. Commit the folder. |
+| Styles look unstyled after editing config           | Restart the Vite dev server; `tailwind.config.js` is not hot-reloaded.                                                     |
 
 ---
 
